@@ -1,3 +1,5 @@
-document.getElementById("btn").addEventListener("click", function () {
-    alert("Button clicked!");
-});
+const heading = document.querySelector("h1");
+
+function changeTitle() {
+    heading.textContent = "You changed the title!";
+}

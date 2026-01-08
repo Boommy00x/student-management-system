@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <h1>AddUSers</h1>
+
+  <form method="POST" action="/users">
+    <div>
+      <label>Name:</label>
+      <input type="text" name="name" placeholder="กรุณาใส่ชื่อด้วยน้พะ" required />
+    </div>
+    <div>
+      <label>Role:</label>
+      <select name="role" required>
+        <option value="member">member</option>
+        <option value="admin">admin</option>
+      </select>
+    </div>
+    <button type="submit">Add User</button>
+  </form>
+
+  <h2>UserList Now</h2>
+  <ul>
+    <% users.forEach(user => { %>
+      <li>
+        <strong><%= user.name %></strong>
+      </li>
+    <% }) %>
+  </ul>
+</body>
+</html>

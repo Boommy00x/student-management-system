@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="th">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>User Management System</title>
+        <link rel="stylesheet" href="style.css" />
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        />
+    </head>
+    <body>
+        <div class="container">
+            <header>
+                <h1><i class="fas fa-users"></i> User Management</h1>
+                <p class="subtitle">จัดการสมาชิกด้วย REST API</p>
+            </header>
+
+            <div class="app-container">
+                <!-- ส่วนแสดงผู้ใช้ทั้งหมด -->
+                <section class="card">
+                    <h2><i class="fas fa-list"></i> ผู้ใช้ทั้งหมด</h2>
+                    <div class="controls">
+                        <button id="getAllBtn" class="btn primary">
+                            <i class="fas fa-sync-alt"></i> โหลดข้อมูลใหม่
+                        </button>
+                        <div class="filter">
+                            <input
+                                type="text"
+                                id="roleFilter"
+                                placeholder="กรองตาม role (admin/member)"
+                            />
+                            <button id="filterBtn" class="btn secondary">
+                                <i class="fas fa-filter"></i> กรอง
+                            </button>
+                        </div>
+                    </div>
+                    <div id="usersList" class="users-list">
+                        <!-- ข้อมูลผู้ใช้จะแสดงที่นี่ -->
+                        <div class="loading">กำลังโหลดข้อมูล...</div>
+                    </div>
+                </section>
+
+                <!-- ส่วนค้นหาผู้ใช้ตาม ID -->
+                <section class="card">
+                    <h2><i class="fas fa-search"></i> ค้นหาผู้ใช้</h2>
+                    <div class="search-box">
+                        <input
+                            type="number"
+                            id="userIdInput"
+                            placeholder="ป้อน ID ผู้ใช้"
+                        />
+                        <button id="searchBtn" class="btn primary">
+                            <i class="fas fa-search"></i> ค้นหา
+                        </button>
+                    </div>
+                    <div id="userDetail" class="user-detail">
+                        <p class="placeholder">ค้นหาผู้ใช้เพื่อดูข้อมูล</p>
+                    </div>
+                </section>
+
+                <!-- ส่วนเพิ่มผู้ใช้ใหม่ -->
+                <section class="card">
+                    <h2><i class="fas fa-user-plus"></i> เพิ่มผู้ใช้ใหม่</h2>
+                    <form id="addUserForm">
+                        <div class="form-group">
+                            <label for="name"
+                                ><i class="fas fa-user"></i> ชื่อ:</label
+                            >
+                            <input
+                                type="text"
+                                id="name"
+                                required
+                                placeholder="เช่น John Doe"
+                            />
+                        </div>
+                        <div class="form-group">
+                            <label for="role"
+                                ><i class="fas fa-user-tag"></i> สิทธิ์:</label
+                            >
+                            <select id="role" required>
+                                <option value="">เลือกสิทธิ์</option>
+                                <option value="admin">Admin</option>
+                                <option value="member">Member</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="username"
+                                ><i class="fas fa-at"></i> Username:</label
+                            >
+                            <input
+                                type="text"
+                                id="username"
+                                required
+                                placeholder="เช่น johndoe"
+                            />
+                        </div>
+                        <div class="form-group">
+                            <label for="email"
+                                ><i class="fas fa-envelope"></i> อีเมล:</label
+                            >
+                            <input
+                                type="email"
+                                id="email"
+                                required
+                                placeholder="เช่น john@example.com"
+                            />
+                        </div>
+                        <button type="submit" class="btn success">
+                            <i class="fas fa-plus-circle"></i> เพิ่มผู้ใช้
+                        </button>
+                    </form>
+                </section>
+
+                <!-- Log Panel -->
+                <section class="card log-panel">
+                    <h2><i class="fas fa-clipboard-list"></i> API Log</h2>
+                    <div class="log-controls">
+                        <button id="clearLogBtn" class="btn secondary">
+                            <i class="fas fa-trash"></i> ล้าง Log
+                        </button>
+                        <span id="apiStatus" class="status online">
+                            <i class="fas fa-circle"></i> API Connected
+                        </span>
+                    </div>
+                    <div id="apiLog" class="log-container">
+                        <div class="log-entry info">
+                            <span class="time">[พร้อมใช้งาน]</span>
+                            <span class="message">ระบบพร้อมใช้งาน!</span>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <footer>
+                <p>
+                    User Management Workshop &copy; 2024 | Backend: Express.js |
+                    Frontend: HTML/CSS/JS
+                </p>
+            </footer>
+        </div>
+
+        <!-- Toast Notification -->
+        <div id="toast" class="toast"></div>
+
+        <script src="script.js"></script>
+    </body>
+</html>

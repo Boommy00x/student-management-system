@@ -1,25 +1,27 @@
-const express = require('express');
-const path = require('path');
+const express = require('express')
+const path = require('path')
 
-const logger = require('./middleware/logger');
+const logger = require('./middleware/logger')
 const studentRoutes = require('./routes/students.routes')
+const authRoutes = require('./routes/auth.routes')
 
-const app = express();
+const app = express()
 
 // standard middleware
 app.use(logger)
-app.use(express.json());
-
+app.use(express.json())
 
 //ตั้งค่า view EJS
-app.set('view engine','ejs');
-app.set('views',path.join(__dirname,'views'));
+app.set('view engine', 'ejs')
+app.set('views', path.join(__dirname, 'views'))
 
 // mount routes คือ routes ใหม่หรือ endpoint
-app.use('/students', studentRoutes);
+app.use('/students', studentRoutes)
+app.use('/auth', authRoutes)
 
-app.get('/',(req,res)=>{
-  res.send("SmS Project กำลังวิ่ง")
+// route ทดสอบ
+app.get('/', (req, res) => {
+  res.send('SmS Project กำลังวิ่ง')
 })
 
 module.exports = app

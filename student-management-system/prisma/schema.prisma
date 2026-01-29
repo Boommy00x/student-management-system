@@ -1,0 +1,133 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model attendance_records {
+  attendance_id   Int            @id @default(autoincrement())
+  section_id      Int
+  student_id      Int
+  attendance_date DateTime       @db.Date
+  status          String         @default("present")
+  note            String?        @db.VarChar(255)
+  class_sections  class_sections @relation(fields: [section_id], references: [section_id], onDelete: Cascade, map: "fk_attendance_section")
+  students        students       @relation(fields: [student_id], references: [student_id], onDelete: Cascade, map: "fk_attendance_student")
+
+  @@unique([section_id, student_id, attendance_date], map: "uk_attendance")
+}
+
+model class_sections {
+  section_id         Int                  @id @default(autoincrement())
+  class_name         String               @db.VarChar(100)
+  teacher_name       String?              @db.VarChar(100)
+  start_date         DateTime?            @db.Date
+  end_date           DateTime?            @db.Date
+  attendance_records attendance_records[]
+  enrollments        enrollments[]
+}
+
+model courses {
+  course_id      Int         @id @default(autoincrement())
+  department_id  Int
+  course_code    String      @unique @db.VarChar(20)
+  course_name_th String      @db.VarChar(255)
+  course_name_en String?     @db.VarChar(255)
+  credit         Decimal     @db.Decimal(3, 1)
+  lecture_hour   Int?        @default(0) @db.SmallInt
+  lab_hour       Int?        @default(0) @db.SmallInt
+  description    String?
+  departments    departments @relation(fields: [department_id], references: [department_id], map: "fk_course_department")
+}
+
+model departments {
+  department_id Int        @id @default(autoincrement())
+  code          String     @unique @db.VarChar(10)
+  name_th       String     @db.VarChar(255)
+  name_en       String?    @db.VarChar(255)
+  courses       courses[]
+  programs      programs[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model enrollments {
+  enrollment_id  Int            @id @default(autoincrement())
+  student_id     Int
+  section_id     Int
+  enroll_date    DateTime       @db.Date
+  status         String         @default("enrolled") @db.VarChar(20)
+  final_score    Decimal?       @db.Decimal(5, 2)
+  final_grade    String?        @db.VarChar(2)
+  class_sections class_sections @relation(fields: [section_id], references: [section_id], onDelete: Cascade, map: "fk_enrollment_section")
+  students       students       @relation(fields: [student_id], references: [student_id], onDelete: Cascade, map: "fk_enrollment_student")
+
+  @@unique([student_id, section_id], map: "uk_student_section")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model instructors {
+  instructor_id Int     @id @default(autoincrement())
+  employee_no   String  @unique @db.VarChar(20)
+  prefix        String? @db.VarChar(20)
+  first_name_th String  @db.VarChar(100)
+  last_name_th  String  @db.VarChar(100)
+  first_name_en String? @db.VarChar(100)
+  last_name_en  String? @db.VarChar(100)
+  email         String? @db.VarChar(255)
+  phone         String? @db.VarChar(20)
+  status        String  @default("active") @db.VarChar(20)
+  users         users?
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model programs {
+  program_id    Int         @id @default(autoincrement())
+  department_id Int
+  code          String      @unique @db.VarChar(20)
+  name_th       String      @db.VarChar(255)
+  name_en       String?     @db.VarChar(255)
+  level         String      @default("Bachelor") @db.VarChar(20)
+  departments   departments @relation(fields: [department_id], references: [department_id], map: "fk_program_department")
+}
+
+model semesters {
+  semester_id   Int      @id @default(autoincrement())
+  academic_year Int      @db.SmallInt
+  term          Int      @db.SmallInt
+  start_date    DateTime @db.Date
+  end_date      DateTime @db.Date
+
+  @@unique([academic_year, term], map: "uk_semester_year_term")
+}
+
+model students {
+  student_id         Int                  @id @default(autoincrement())
+  first_name         String               @db.VarChar(100)
+  last_name          String               @db.VarChar(100)
+  email              String?              @unique @db.VarChar(255)
+  enrollment_date    DateTime             @default(dbgenerated("CURRENT_DATE")) @db.Date
+  attendance_records attendance_records[]
+  enrollments        enrollments[]
+  users              users?
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model users {
+  user_id       Int          @id @default(autoincrement())
+  username      String       @unique @db.VarChar(50)
+  password_hash String       @db.VarChar(255)
+  role          String       @default("student") @db.VarChar(20)
+  student_id    Int?         @unique(map: "uk_user_student")
+  instructor_id Int?         @unique(map: "uk_user_instructor")
+  is_active     Boolean      @default(true)
+  last_login    DateTime?    @db.Timestamp(6)
+  created_at    DateTime     @default(now()) @db.Timestamp(6)
+  updated_at    DateTime     @default(now()) @db.Timestamp(6)
+  instructors   instructors? @relation(fields: [instructor_id], references: [instructor_id], map: "fk_user_instructor")
+  students      students?    @relation(fields: [student_id], references: [student_id], map: "fk_user_student")
+}
